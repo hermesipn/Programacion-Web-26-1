@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="styles/calculadora-geometrica.css" />
+    <script type="text/javascript" src="scripts/calculadora-geometrica.js">
+        <!-- // 
+         -->
+    </script>
+</head>
+
+<body onload="init();">
+    <h1>Perímetro de un triángulo</h1>
+    <div id="errorMessage" class="error-message hide">Para realizar el cálculo es necesario proporcionar todos los lados
+    </div>
+    <div id="successMessage" class="success-message hide">El calculo del perimétro se realizó exitósamente</div>
+    <div>
+        <div><label>Tipo de triángulo</label></div>
+        <div><input name="tipoTriangulo" type="radio" value="1">Isósceles</input>
+            <input name="tipoTriangulo" type="radio" value="2">Equilatero</input>
+            <input name="tipoTriangulo" type="radio" value="3">Escaleno</input>
+        </div>
+    </div>
+    <div id="divTrianguloIsosceles" class="hide">
+        <div><label>Lados iguales</label></div>
+        <div><input id="lado-1" type="number" /></div>
+        <div><label>Lado desigual</label></div>
+        <div><input id="lado-2" type="number" /></div>
+        <div><label>Resultado</label></div>
+        <div><input id="resultado" type="text" disabled="true" /></div>
+        <div id="divResultado"></div>
+        <div><button id="btnPerimetroTriangulo">Calcular</button></div>
+    </div>
+    <div id="divTrianguloEquilatero" class="hide">
+        <div><label>Lado</label></div>
+        <div><input id="lado-1" type="number" /></div>
+        <div><label>Resultado</label></div>
+        <div><input id="resultado" type="text" disabled="true" /></div>
+        <div id="divResultado"></div>
+        <div><button id="btnPerimetroTriangulo">Calcular</button></div>
+    </div>
+    <div id="divTrianguloEscaleno" class="hide">
+        <div><label>Lado 1</label></div>
+        <div><input id="lado-1" type="number" /></div>
+        <div><label>Lado 2</label></div>
+        <div><input id="lado-2" type="number" /></div>
+        <div><label>Lado 3</label></div>
+        <div><input id="lado-3" type="number" /></div>
+        <div><label>Resultado</label></div>
+        <div><input id="resultado" type="text" disabled="true" /></div>
+        <div id="divResultado"></div>
+        <div><button id="btnPerimetroTriangulo">Calcular</button></div>
+    </div>
+</body>
+
+</html>

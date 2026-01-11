@@ -1,73 +1,165 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Getting Started: Serving Web Content</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Registro de Usuario - Sistema de Citas</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .signin-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 650px;
+            background: white;
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            background: #198754;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 10px 15px;
+            border: 1px solid #dee2e6;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.1);
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            color: #198754;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .btn-register {
+            background-color: #198754;
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-register:hover {
+            background-color: #146c43;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-<div class="title"><h1>Iniciar sesión</h1></div>
-<div class="form-container">
-    <form action="/signin" th:object="${signinDto}" method="post" autocomplete="off">
-        <div class="form-row form-title">
-            <h1>Registrarse</h1>
-        </div>
-        <div>
-            <p th:text="${errorLogin}"></p>
-        </div>
-        <div class="form-row">
-            <div class="form-label"><label class="required">Nombre</label></div>
-            <div class="form-input">
-                <input type="text" th:field="*{nombre}"></input>
-                <p th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></p>
+
+<div class="signin-card shadow">
+    <div class="card-header-custom">
+        <h2 class="fw-bold mb-0">Crear Nueva Cuenta</h2>
+        <p class="small mb-0 opacity-75">Únete a nuestro sistema de gestión de citas</p>
+    </div>
+
+    <div class="card-body p-4 p-md-5">
+        <form th:action="@{/signin}" th:object="${signinDto}" method="post" autocomplete="off">
+
+            <div th:if="${errorLogin}" class="alert alert-danger d-flex align-items-center" role="alert">
+                <span th:text="${errorLogin}"></span>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-label"><label>Primer apellido</label></div>
-            <div class="form-input">
-                <input type="text" th:field="*{primerApellido}"></input>
-                <p th:if="${#fields.hasErrors('primerApellido')}" th:errors="*{primerApellido}" class="error"></p>
+
+            <div class="section-title">Información Personal</div>
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label text-uppercase">Nombre(s)</label>
+                    <input type="text" th:field="*{nombre}" class="form-control" placeholder="Ej. Juan Carlos">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('nombre')}"
+                         th:errors="*{nombre}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-uppercase">Primer Apellido</label>
+                    <input type="text" th:field="*{primerApellido}" class="form-control" placeholder="Paterno">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('primerApellido')}"
+                         th:errors="*{primerApellido}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-uppercase">Segundo Apellido</label>
+                    <input type="text" th:field="*{segundoApellido}" class="form-control" placeholder="Materno">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-uppercase">Fecha de Nacimiento</label>
+                    <input type="date" th:field="*{fechaNacimiento}" class="form-control">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('fechaNacimiento')}"
+                         th:errors="*{fechaNacimiento}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-uppercase">Género</label>
+                    <select th:field="*{idGenero}" class="form-select">
+                        <option value="">Seleccione...</option>
+                        <option th:each="g : ${generos}"
+                                th:value="${g.id}"
+                                th:text="${g.nombre}"></option>
+                    </select>
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('idGenero')}"
+                         th:errors="*{idGenero}"></div>
+                </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-label"><label>Segundo apellido</label></div>
-            <div class="form-input">
-                <input type="text" th:field="*{segundoApellido}"></input>
-                <p th:if="${#fields.hasErrors('segundoApellido')}" th:errors="*{segundoApellido}" class="error"></p>
+
+            <div class="section-title mt-5">Datos de Acceso</div>
+            <div class="row g-3 bg-light p-3 rounded-3">
+                <div class="col-md-6">
+                    <label class="form-label text-uppercase">Usuario / Email</label>
+                    <input type="text" th:field="*{login}" class="form-control" placeholder="usuario123">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('login')}"
+                         th:errors="*{login}"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-uppercase">Contraseña</label>
+                    <input type="password" th:field="*{password}" class="form-control" placeholder="••••••••">
+                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('password')}"
+                         th:errors="*{password}"></div>
+                </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-label"><label>Fecha de nacimiento</label></div>
-            <div class="form-input">
-                <input type="text" th:field="*{fechaNacimiento}"></input>
-                <p th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}" class="error"></p>
+
+            <div class="mt-5 d-grid gap-2">
+                <button type="submit" class="btn btn-register btn-lg text-white shadow-sm">
+                    Finalizar Registro
+                </button>
+                <a th:href="@{/}" class="btn btn-link text-muted text-decoration-none small">
+                    ¿Ya tienes cuenta? Regresar al Inicio
+                </a>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-label"><label>Genero</label></div>
-            <div class="form-input">
-                <input type="text" th:field="*{idGenero}"></input>
-                <p th:if="${#fields.hasErrors('idGenero')}" th:errors="*{idGenero}" class="error"></p>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-label"><label>Login</label></div>
-            <div class="form-input">
-                <input type="text" th:field="*{login}"></input>
-                <p th:if="${#fields.hasErrors('login')}" th:errors="*{login}" class="error"></p>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-label"><label>Contraseña</label></div>
-            <div class="form-input">
-                <input type="password" th:field="*{password}"></input>
-                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></p>
-            </div>
-        </div>
-        <div class="form-row">
-            <input type="submit" value="Aceptar">
-            <a href="/">Cancelar</a>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

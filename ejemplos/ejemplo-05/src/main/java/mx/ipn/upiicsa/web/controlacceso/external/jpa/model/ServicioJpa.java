@@ -1,24 +1,25 @@
 package mx.ipn.upiicsa.web.controlacceso.external.jpa.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.List;
-@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Setter
+@Getter
 @Entity
-@Table(name = "cca01_genero")
-public class GeneroJpa {
+@Table(name = "cci01_servicio")
+public class ServicioJpa {
     @Id
-    @Column(name = "id_genero")
+    @Column(name = "id_servicio")
     private Integer id;
     @Column(name = "tx_nombre")
     private String nombre;
     @Column(name = "tx_descripcion")
     private String descripcion;
     @Column(name = "st_activo")
-    private Boolean activo;
-    @OneToMany(mappedBy = "genero")
-    List<PersonaJpa> personas;
+    private Integer activo; // Diagrama dice int4
+    @Column(name = "nu_duracion")
+    private Integer duracion;
 }

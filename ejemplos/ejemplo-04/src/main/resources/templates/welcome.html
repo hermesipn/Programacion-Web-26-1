@@ -1,16 +1,100 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Getting Started: Serving Web Content</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Panel de Usuario - Sistema de Citas</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .welcome-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            background: white;
+            transition: transform 0.3s;
+        }
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+        .btn-custom {
+            padding: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
-<body>
-<div class="title"><h1>Iniciar sesión</h1></div>
-<div class="form-container">
-        <div class="form-row form-title">
-            <h1>Bienvenido</h1>
+<body class="d-flex align-items-center">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <div th:if="${param.exito}" class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
+                <strong>¡Excelente!</strong> Tu cita se ha agendado correctamente.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="welcome-card card p-5 text-center">
+                <div class="user-avatar">
+                    <span th:text="${#strings.substring(persona.nombre,0,1)}">U</span>
+                </div>
+
+                <h3 class="text-muted mb-1">Bienvenido de nuevo,</h3>
+                <h1 class="fw-bold mb-4 text-dark">
+                    <span th:text="${persona.nombre}">Nombre</span>
+                    <span th:text="${persona.primerApellido}">Apellido</span>
+                </h1>
+
+                <p class="text-muted mb-5">¿Qué te gustaría hacer hoy?</p>
+
+                <div class="d-grid gap-3">
+                    <a th:href="@{/citas/agendar}" class="btn btn-primary btn-custom btn-lg shadow-sm">
+                        <span>📅</span> Agendar Nueva Cita
+                    </a>
+
+                    <a th:href="@{/citas/mis-citas}" class="btn btn-info btn-custom btn-lg text-white shadow-sm">
+                        <span>📋</span> Mis Citas Registradas
+                    </a>
+
+                    <div class="my-3">
+                        <hr class="text-muted">
+                    </div>
+
+                    <a th:href="@{/logout}" class="btn btn-link text-danger fw-bold text-decoration-none">
+                        Cerrar Sesión Segura
+                    </a>
+                </div>
+            </div>
+
+            <p class="text-center mt-4 text-muted small">© 2026 Sistema de Control de Acceso - IPN UPIICSA</p>
         </div>
-        <p><span th:text="${persona.nombre}"></span> <span th:text="${persona.primerApellido}"></span> <span th:text="${persona.segundoApellido}"></span></p>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

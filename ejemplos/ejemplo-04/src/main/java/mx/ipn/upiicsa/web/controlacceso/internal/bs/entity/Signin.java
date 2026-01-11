@@ -1,12 +1,12 @@
 package mx.ipn.upiicsa.web.controlacceso.internal.bs.entity;
 
 import lombok.*;
-
 import java.time.LocalDate;
 
 @Builder
-@Setter
-@Getter
+@Data // Esto incluye @Getter, @Setter y otros
+@AllArgsConstructor
+@NoArgsConstructor
 public class Signin {
     private Integer idGenero;
     private String nombre;
@@ -15,4 +15,7 @@ public class Signin {
     private LocalDate fechaNacimiento;
     private String login;
     private String password;
+
+    // AGREGA ESTA LÍNEA
+    private Integer idRol;
 }

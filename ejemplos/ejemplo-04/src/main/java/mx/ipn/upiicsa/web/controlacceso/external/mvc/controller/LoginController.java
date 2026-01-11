@@ -3,6 +3,7 @@ package mx.ipn.upiicsa.web.controlacceso.external.mvc.controller;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import mx.ipn.upiicsa.web.controlacceso.external.jpa.repository.GeneroJpaRepository;
 import mx.ipn.upiicsa.web.controlacceso.external.mvc.dto.SigninDto;
 import mx.ipn.upiicsa.web.controlacceso.internal.bs.implemet.LoginBs;
 import mx.ipn.upiicsa.web.controlacceso.external.mvc.dto.LoginDto;
@@ -24,7 +25,12 @@ public class LoginController {
     private LoginService loginService;
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(HttpSession session, Model model) {
+        // Si ya existe la persona en sesión, mándalo directo a welcome
+        if (session.getAttribute("persona") != null) {
+            return "redirect:/citas/welcome";
+        }
+
         model.addAttribute("loginDto", new LoginDto());
         return "index";
     }
@@ -62,37 +68,72 @@ public class LoginController {
         return resultado;
     }
 
+    @Autowired private GeneroJpaRepository generoRepo; // Necesitas crear esta interfaz
+
     @GetMapping("/signin")
-    public String signin(Model model) {
-        model.addAttribute("signinDto", SigninDto.builder().build());
+    public String mostrarRegistro(Model model) {
+        // Cargamos los géneros de la base de datos de forma dinámica
+        model.addAttribute("generos", generoRepo.findAll());
+        model.addAttribute("signinDto", new SigninDto());
         return "signin";
     }
 
     @PostMapping("/signin")
     public String signin(@Valid @ModelAttribute SigninDto signinDto, BindingResult bindingResult, Model model) {
-        String resultado;
-        for (ObjectError error : bindingResult.getAllErrors()) {
-            log.info("ERROR: {} {}", error.getObjectName(), error.getDefaultMessage());
-        }
-        log.info("Valores del registro: {} {} {} {} {}", signinDto.getIdGenero(), signinDto.getNombre(),signinDto.getPrimerApellido(), signinDto.getSegundoApellido(), signinDto.getFechaNacimiento());
         if (!bindingResult.hasErrors()) {
-            var signinResultado = loginService.signin(signinDto.toEntity());
-            if(signinResultado.isRight()) {
-                model.addAttribute("signinSuccess", "El registro se realizó exitosamente");
-                model.addAttribute("loginDto", new LoginDto());
-                resultado = "index";
-            } else {
-                var errorCode = signinResultado.getLeft();
-                if(errorCode == 3) {
-                    bindingResult.rejectValue("fechaNacimiento","fechaNacimiento","El registro se permite sólo a mayores de edad");
-                } else if(errorCode == 4) {
-                    bindingResult.rejectValue("login","login","El login proporcionado ya se encuentra registrado y asociado a otra persona");
-                }
-                resultado = "signin";
+            // 1. Obtenemos la entidad JPA (donde podemos manipular el Rol)
+            var personaJpa = signinDto.toEntity();
+
+            // 2. Asignamos el Rol 3 al usuario interno
+            if (personaJpa.getUsuario() != null) {
+                personaJpa.getUsuario().setIdRol(3);
             }
-        } else {
-            resultado = "signin";
+
+            // 3. ¡AQUÍ ESTÁ EL TRUCO!
+            // Convertimos el JPA de nuevo al objeto 'Signin' que el servicio espera.
+            // Usaremos los datos que ya tiene personaJpa.
+            mx.ipn.upiicsa.web.controlacceso.internal.bs.entity.Signin signinNegocio =
+                    mx.ipn.upiicsa.web.controlacceso.internal.bs.entity.Signin.builder()
+                            .idGenero(personaJpa.getIdGenero())
+                            .nombre(personaJpa.getNombre())
+                            .primerApellido(personaJpa.getPrimerApellido())
+                            .segundoApellido(personaJpa.getSegundoApellido())
+                            .fechaNacimiento(personaJpa.getFechaNacimiento())
+                            .login(personaJpa.getUsuario().getLogin())
+                            .password(personaJpa.getUsuario().getPassword())
+                            .idRol(personaJpa.getUsuario().getIdRol()) // Aquí pasamos el 3
+                            .build();
+
+            // 4. Ahora enviamos el objeto correcto al servicio
+            var signinResultado = loginService.signin(signinNegocio);
+
+            if(signinResultado.isRight()) {
+                model.addAttribute("signinSuccess", "Registro exitoso");
+                model.addAttribute("loginDto", new LoginDto());
+                return "index";
+            } else {
+                // Manejo de errores...
+                model.addAttribute("generos", generoRepo.findAll());
+                return "signin";
+            }
         }
-        return resultado;
+        model.addAttribute("generos", generoRepo.findAll());
+        return "signin";
+    }
+    // Dentro de LoginController.java
+    @GetMapping("/welcome")
+    public String welcome(HttpSession session, Model model) {
+        // Recuperamos la persona de la sesión para que la vista no falle
+        var persona = session.getAttribute("persona");
+        if (persona == null) {
+            return "redirect:/"; // Si no hay sesión, al login
+        }
+        model.addAttribute("persona", persona);
+        return "welcome"; // Retorna el template welcome.html
+    }
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // Borra todos los datos de la sesión (incluyendo el objeto Persona)
+        return "redirect:/";  // Te manda de nuevo al login
     }
 }
